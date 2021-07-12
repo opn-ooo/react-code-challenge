@@ -1,3 +1,9 @@
+Design: https://figma.fun/3oegaU
+
+Prototype: https://figma.fun/tnuL7b
+
+
+
 This project is bootstrapped with [ViteJS](https://vitejs.dev).
 
 ## Main Specification
