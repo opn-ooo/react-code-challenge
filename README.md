@@ -2,7 +2,7 @@ Design: https://figma.fun/3oegaU
 
 Prototype: https://figma.fun/tnuL7b
 
-
+API: http://203.170.190.44:8049
 
 This project is bootstrapped with [ViteJS](https://vitejs.dev).
 
@@ -21,6 +21,8 @@ This project is bootstrapped with [ViteJS](https://vitejs.dev).
 -   axios
 
 ## Installation
+
+Add `.env`
 
 ```bash
 $ yarn install
