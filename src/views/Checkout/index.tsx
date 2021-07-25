@@ -8,6 +8,9 @@ import { RootState } from "@app/store"
 // Actions
 import { usePageClass } from "@hooks/actions/usePageClass"
 
+// Services
+import { postPayment } from "@hooks/services/backend"
+
 // Components Layouts
 import LayoutCenter from "@components/layouts/LayoutCenter"
 
@@ -34,7 +37,6 @@ type TypeCartItems = {
     id: string | number
     name: string
     price: number
-    currency: string
     qty: number
 }[]
 
@@ -48,6 +50,11 @@ const PageCheckout: FC<InterfaceCheckoutProps> = ({
     BlockName = DefaultBlockName,
 }) => {
     usePageClass({ name: BlockName })
+
+    const {
+        state: { loading },
+        post,
+    } = postPayment()
 
     const CartItems: TypeCartItems = useSelector(
         (state: RootState) => state.cart
@@ -63,9 +70,23 @@ const PageCheckout: FC<InterfaceCheckoutProps> = ({
     )
 
     const onSubmit = (values: TypeCheckoutFormValues) => {
-        alert(JSON.stringify(values, null, 2))
-
-        toast.success("Success")
+        toast.promise(
+            post({
+                paymentInfo: {
+                    cardInfo: {
+                        cardNo: `${values.card_number}`,
+                        cardCVV: `${values.cvv}`,
+                        cardExpiryDate: `${values.card_expire}`,
+                    },
+                    email: `${values.email}`,
+                },
+            }),
+            {
+                loading: "Paying...",
+                success: "Success",
+                error: "Something went wrong",
+            }
+        )
     }
 
     return (
@@ -74,20 +95,20 @@ const PageCheckout: FC<InterfaceCheckoutProps> = ({
                 <Title>Checkout</Title>
 
                 <List>
-                    {CartItems.map(({ id, name, price, qty, currency }) => (
+                    {CartItems.map(({ id, name, price, qty }) => (
                         <Products key={id}>
                             <ProductHead />
 
                             <ProductContent>
                                 <ProductLabel>{name}</ProductLabel>
                                 <ProductPrice>
-                                    {price.toLocaleString()} {currency}
+                                    {price.toLocaleString()} THB
                                 </ProductPrice>
                             </ProductContent>
 
                             <ProductContent>
                                 <ProductTotalPrice>
-                                    {(price * qty).toLocaleString()} {currency}
+                                    {(price * qty).toLocaleString()} THB
                                 </ProductTotalPrice>
 
                                 <ProductQuantity>qty: {qty}</ProductQuantity>
@@ -99,6 +120,7 @@ const PageCheckout: FC<InterfaceCheckoutProps> = ({
                 <CheckoutForm
                     onSuccess={onSubmit}
                     submitText={`Pay ${totalPrice.toLocaleString()} THB`}
+                    loading={loading}
                 />
             </Container>
         </LayoutCenter>

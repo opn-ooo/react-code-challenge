@@ -4,6 +4,7 @@ import { useLocation } from "wouter"
 
 // Actions
 import { usePageClass } from "@hooks/actions/usePageClass"
+import { getProductList, TypeProductListData } from "@hooks/services/backend"
 
 // Components Layouts
 import LayoutCenter from "@components/layouts/LayoutCenter"
@@ -32,13 +33,15 @@ import { ReactComponent as IconPlus } from "@components/svgs/plus.svg"
 import { ReactComponent as IconMinus } from "@components/svgs/minus.svg"
 import { ReactComponent as IconCart } from "@components/svgs/cart.svg"
 
-// Data
-import Data from "./data.json"
+type TypeProductData = TypeProductListData & {
+    qty: number
+}
 
-const prepareData = () => {
-    return Data.map((info) => ({
+const prepareData = (data: TypeProductListData[]): TypeProductData[] => {
+    return data.map((info) => ({
         ...info,
         qty: 0,
+        price: +info.price,
     }))
 }
 
@@ -57,7 +60,14 @@ const PageProducts: FC<InterfaceProductsProps> = ({
 
     const dispatch = useDispatch()
 
-    const [products, updateProducts] = useState(prepareData)
+    const { state: fetchedData, fetch } = getProductList()
+
+    const requestedData = useMemo(
+        () => prepareData(fetchedData.data),
+        [fetchedData.data]
+    )
+
+    const [products, updateProducts] = useState<TypeProductData[]>([])
 
     const catItemCount = useMemo(
         () => products.reduce((total, { qty }) => total + qty, 0),
@@ -65,6 +75,11 @@ const PageProducts: FC<InterfaceProductsProps> = ({
     )
 
     const isEmptyCart = useMemo(() => catItemCount <= 0, [catItemCount])
+
+    const disableCheckout = useMemo(
+        () => isEmptyCart || fetchedData.loading,
+        [isEmptyCart, fetchedData.loading]
+    )
 
     const remove = (id: number | string) => {
         updateProducts((old) =>
@@ -100,6 +115,16 @@ const PageProducts: FC<InterfaceProductsProps> = ({
         setLocation("/checkout")
     }
 
+    // Fetch on mount
+    useEffect(() => {
+        fetch()
+    }, [fetch])
+
+    // Sync to state
+    useEffect(() => {
+        updateProducts(requestedData)
+    }, [requestedData, updateProducts])
+
     // Sync to redux
     useEffect(() => {
         const cartItems = products.filter(({ qty }) => qty > 0)
@@ -113,14 +138,14 @@ const PageProducts: FC<InterfaceProductsProps> = ({
                 <Title>Products</Title>
 
                 <List>
-                    {products.map(({ id, name, price, qty, currency }) => (
+                    {products.map(({ id, name, price, qty }) => (
                         <Products key={id}>
                             <ProductHead />
 
                             <ProductName>{name}</ProductName>
 
                             <ProductPrice>
-                                {price.toLocaleString()} {currency}
+                                {price.toLocaleString()} THB
                             </ProductPrice>
 
                             <ProductQuantity>
@@ -157,7 +182,10 @@ const PageProducts: FC<InterfaceProductsProps> = ({
                         </ProductCartCount>
                     </ProductCartButton>
 
-                    <ProductCartText disabled={isEmptyCart} onClick={viewCart}>
+                    <ProductCartText
+                        disabled={disableCheckout}
+                        onClick={viewCart}
+                    >
                         Checkout
                     </ProductCartText>
                 </ProductCart>
