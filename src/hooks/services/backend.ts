@@ -116,7 +116,7 @@ export const postPayment = () => {
             // Api request
             const Api = Request({
                 method: "post",
-                url: `/profile/payment`,
+                url: `/pay`,
                 data: payload,
             })
                 .then(successResolver)

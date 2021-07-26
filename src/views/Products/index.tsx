@@ -41,7 +41,6 @@ const prepareData = (data: TypeProductListData[]): TypeProductData[] => {
     return data.map((info) => ({
         ...info,
         qty: 0,
-        price: +info.price,
     }))
 }
 
