@@ -24,8 +24,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14'
+          
+      - name: Setup environment
+        run: |
+          echo "VITE_APP_TITLE=React Code Challenge" >> .env
+          echo "VITE_API_1=http://203.170.190.44:8049" >> .env
 
-      # Runs a single command using the runners shell
       - name: Build
         run: |
           yarn
