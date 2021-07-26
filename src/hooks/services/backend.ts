@@ -21,7 +21,7 @@ export type TypePaymentState = defaultState & {
     data: any
 }
 
-export type TypePaymentPostData = {
+export type TypePaymentRequest = {
     paymentInfo: {
         email: string
         cardInfo: {
@@ -30,6 +30,10 @@ export type TypePaymentPostData = {
             cardCVV: string
         }
     }
+    products: {
+        id: string
+        quantity: number
+    }[]
 }
 
 export const getProductList = () => {
@@ -105,7 +109,7 @@ export const postPayment = () => {
         useApiBackend<TypePaymentState>(defaultState)
 
     const post = useCallback(
-        async (payload: TypePaymentPostData) => {
+        async (payload: TypePaymentRequest) => {
             // On Request state
             setState((old: any) => ({
                 ...old,

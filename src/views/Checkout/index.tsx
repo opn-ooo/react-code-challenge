@@ -34,7 +34,7 @@ import {
 } from "./index.styled"
 
 type TypeCartItems = {
-    id: string | number
+    id: string
     name: string
     price: number
     qty: number
@@ -80,6 +80,10 @@ const PageCheckout: FC<InterfaceCheckoutProps> = ({
                     },
                     email: `${values.email}`,
                 },
+                products: CartItems.map((product) => ({
+                    id: product.id,
+                    quantity: product.qty,
+                })),
             }),
             {
                 loading: "Paying...",
