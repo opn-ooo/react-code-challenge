@@ -1,6 +1,7 @@
-import React, { FC, useMemo } from "react"
+import React, { FC, useEffect, useMemo } from "react"
 import { useSelector } from "react-redux"
 import toast from "react-hot-toast"
+import { useLocation } from "wouter"
 
 // Store
 import { RootState } from "@app/store"
@@ -51,6 +52,8 @@ const PageCheckout: FC<InterfaceCheckoutProps> = ({
 }) => {
     usePageClass({ name: BlockName })
 
+    const [, setLocation] = useLocation()
+
     const {
         state: { loading },
         post,
@@ -92,6 +95,14 @@ const PageCheckout: FC<InterfaceCheckoutProps> = ({
             }
         )
     }
+
+    // Redirect on empty cart
+    useEffect(() => {
+        if (!CartItems.length) {
+            setLocation("/")
+            toast.error("Empty products. Please add some.")
+        }
+    }, [CartItems])
 
     return (
         <LayoutCenter>
