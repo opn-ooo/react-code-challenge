@@ -1,7 +1,21 @@
-import React, { FC, useCallback, useEffect, SyntheticEvent } from "react"
+import React, {
+    FC,
+    useCallback,
+    useEffect,
+    SyntheticEvent,
+    ChangeEvent,
+} from "react"
 import useModels from "react-use-models"
 import useValidator from "react-joi"
 import Joi from "joi"
+import {
+    validateCardExpiry,
+    validateCardNumber,
+    formatCardNumber,
+    formatCardExpiry,
+    parseCardType,
+    validateCardCVC,
+} from "creditcardutils"
 
 // Styled Elements
 import {
@@ -43,7 +57,7 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
     loading = false,
     submitText = "Submit",
 }) => {
-    const { models, register } = useModels({
+    const { models, register, updateModel } = useModels({
         defaultState,
     })
     const { state, setData } = useValidator({
@@ -60,37 +74,62 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
                     "any.required": "Required",
                 }),
             card_number: Joi.string()
-                .pattern(/^[0-9]+$/)
-                .min(12)
-                .max(19)
+                .custom((value, helpers) => {
+                    if (value) {
+                        if (!validateCardNumber(value)) {
+                            return helpers.error("string.cardNumber")
+                        }
+
+                        if (
+                            !["mastercard", "visa"].includes(
+                                parseCardType(value)
+                            )
+                        ) {
+                            return helpers.error("string.cardType")
+                        }
+                    }
+
+                    return value
+                })
                 .required()
                 .messages({
-                    "string.pattern.base": "Must be numeric",
                     "string.empty": "Required",
-                    "string.min": "Minimum 12 digits required",
-                    "string.max": "Must be 19 Maximum digits",
+                    "string.cardNumber": "Must be a valid card",
+                    "string.cardType": "Must be Mastercard or Visa type",
                     "any.required": "Required",
                 }),
             card_expire: Joi.string()
-                .pattern(/^[0-9]+$/)
-                .length(4)
+                .custom((value, helpers) => {
+                    if (value) {
+                        if (!validateCardExpiry(...value.split("/"))) {
+                            return helpers.error("string.card_expire")
+                        }
+                    }
+
+                    return value
+                })
                 .required()
                 .messages({
-                    "string.pattern.base": "Must be numeric",
                     "string.empty": "Required",
-                    "string.length": "Must be 4 digits",
+                    "string.card_expire": "Invalid",
                     "any.required": "Required",
                 }),
             cvv: Joi.string()
-                .pattern(/^[0-9]+$/)
-                .min(3)
-                .max(4)
+                .length(3)
+                .custom((value, helpers) => {
+                    if (value) {
+                        if (!validateCardCVC(value)) {
+                            return helpers.error("string.cvv")
+                        }
+                    }
+
+                    return value
+                })
                 .required()
                 .messages({
-                    "string.pattern.base": "Must be numeric",
                     "string.empty": "Required",
-                    "string.min": "Minimum 3 digits",
-                    "string.max": "Maximum 4 digits",
+                    "string.length": "Maximum 3 digits",
+                    "string.cvv": "Invalid code",
                     "any.required": "Required",
                 }),
         }),
@@ -109,6 +148,19 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
         e.preventDefault()
 
         onSuccess(state.$data)
+    }
+
+    const formatter = {
+        cardNumber: (e: ChangeEvent<HTMLInputElement>) => {
+            const value = formatCardNumber(e.target.value)
+
+            updateModel("card_number", value)
+        },
+        cardExpire: (e: ChangeEvent<HTMLInputElement>) => {
+            const value = formatCardExpiry(e.target.value)
+
+            updateModel("card_expire", value)
+        },
     }
 
     // Sync model <-> validator
@@ -146,7 +198,10 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
                             </FieldLabel>
 
                             <Input
-                                {...register.input({ name: "card_number" })}
+                                {...register.input({
+                                    name: "card_number",
+                                    onChange: formatter.cardNumber,
+                                })}
                                 type="text"
                                 placeholder="1234 1234 1234 1234"
                             />
@@ -162,7 +217,10 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
                     <FieldsMerge>
                         <Fields>
                             <Input
-                                {...register.input({ name: "card_expire" })}
+                                {...register.input({
+                                    name: "card_expire",
+                                    onChange: formatter.cardExpire,
+                                })}
                                 type="text"
                                 placeholder="MM / YY"
                             />

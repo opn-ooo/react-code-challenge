@@ -598,6 +598,11 @@ cosmiconfig@^7.0.0:
     path-type "^4.0.0"
     yaml "^1.10.0"
 
+creditcardutils@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/creditcardutils/-/creditcardutils-1.0.0.tgz#c94ad8e6f5ef249b0463e0e5ea8d7a7c4e9ce425"
+  integrity sha1-yUrY5vXvJJsEY+Dl6o16fE6c5CU=
+
 css-color-keywords@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/css-color-keywords/-/css-color-keywords-1.0.0.tgz#fea2616dc676b2962686b3af8dbdbe180b244e05"
