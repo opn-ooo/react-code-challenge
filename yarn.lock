@@ -976,10 +976,10 @@ react-refresh@^0.10.0:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.10.0.tgz#2f536c9660c0b9b1d500684d9e52a65e7404f7e3"
   integrity sha512-PgidR3wST3dDYKr6b4pJoqQFpPGNKDSCDx4cZoshjXipw3LzO7mG1My2pwEzz2JVkF+inx3xRpDeQLFQGH/hsQ==
 
-react-use-models@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/react-use-models/-/react-use-models-0.2.1.tgz#518459f147e3cfef67fdc5dc5e0a87b52ab36904"
-  integrity sha512-lm1jmGktS0LmbWuwVi3mWD/L9piQJPLToc9MsseLuD5Z7ECOxBSlYe/nN7xRlhg8/er5yX/vZQY/61BCkHPSwA==
+react-use-models@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/react-use-models/-/react-use-models-0.2.4.tgz#4cad5136dc4bcdf22c039a678ee32863fc495cff"
+  integrity sha512-WFUDOK82fWdUOMn/uvklnBcJXyKHxVswacWnQrcyWTiFt4Kz81Xf44UZNMrHWxF1FLBUEZYiWGvUiBgQK/e7xQ==
   dependencies:
     lodash.get "^4.4.2"
     lodash.set "^4.3.2"

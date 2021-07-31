@@ -16,7 +16,7 @@
         "react-hot-toast": "^2.0.0",
         "react-joi": "^0.0.6",
         "react-redux": "^7.2.4",
-        "react-use-models": "^0.2.1",
+        "react-use-models": "^0.2.4",
         "redux": "^4.1.0",
         "sass": "^1.35.2",
         "styled-components": "^5.3.0",

@@ -32,12 +32,14 @@ import {
     FieldsMerge,
 } from "./index.styled"
 
-export type TypeCheckoutFormValues = {
-    email: string
-    card_number: string
-    card_expire: string
-    cvv: string
+type TypeCheckoutFormDefaultValues = {
+    email: string | null
+    card_number: string | null
+    card_expire: string | null
+    cvv: string | null
 }
+
+export type TypeCheckoutFormValues = NonNullable<TypeCheckoutFormDefaultValues>
 
 export interface CheckoutFormProps {
     onSuccess: (values: TypeCheckoutFormValues) => void
@@ -45,7 +47,7 @@ export interface CheckoutFormProps {
     submitText?: string
 }
 
-const defaultState = {
+const defaultState: TypeCheckoutFormDefaultValues = {
     email: null,
     card_number: null,
     card_expire: null,
@@ -57,9 +59,10 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
     loading = false,
     submitText = "Submit",
 }) => {
-    const { models, register, updateModel } = useModels({
-        defaultState,
-    })
+    const { models, register, updateModel } =
+        useModels<TypeCheckoutFormDefaultValues>({
+            defaultState,
+        })
     const { state, setData } = useValidator({
         initialData: defaultState,
         schema: Joi.object({
