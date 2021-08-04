@@ -7,6 +7,8 @@ import { routePreprocess } from "@hooks/actions/routePreprocess"
 // Routes info
 import Routes from "@app/routes"
 
+const baseUrl = import.meta.env.VITE_BASE_PATH
+
 const App = () => {
     routePreprocess(Routes)
 
@@ -14,6 +16,7 @@ const App = () => {
         <Switch>
             {Routes.map(({ component, path, key }) => (
                 <Route
+                    base={baseUrl}
                     key={path || key}
                     path={path}
                     component={component as any}
