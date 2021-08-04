@@ -1,3 +1,7 @@
+# React code challenge
+
+[![Deploy to Github Page](https://github.com/opn-ooo/react-code-challenge/actions/workflows/deploy-gh-pages.yml/badge.svg)](https://github.com/opn-ooo/react-code-challenge/actions/workflows/deploy-gh-pages.yml)
+
 Design: https://figma.fun/3oegaU
 
 Prototype: https://figma.fun/tnuL7b
