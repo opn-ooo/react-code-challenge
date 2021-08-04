@@ -27,6 +27,7 @@ jobs:
           
       - name: Setup environment
         run: |
+          echo "VITE_BASE_PATH=/react-code-challenge" >> .env
           echo "VITE_APP_TITLE=React Code Challenge" >> .env
           echo "VITE_API_1=http://203.170.190.44:8049" >> .env
 
