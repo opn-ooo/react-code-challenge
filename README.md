@@ -6,7 +6,9 @@ Design: https://figma.fun/3oegaU
 
 Prototype: https://figma.fun/tnuL7b
 
-API: http://203.170.190.44:8049
+API:
+- `http`: http://203.170.190.44:8049
+- `https`: https://react-code-challenge-mock-api.netlify.app
 
 This project is bootstrapped with [ViteJS](https://vitejs.dev).
 
