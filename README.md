@@ -1,6 +1,10 @@
 # React code challenge
 
-[![Deploy to Github Page](https://github.com/opn-ooo/react-code-challenge/actions/workflows/deploy-gh-pages.yml/badge.svg)](https://github.com/opn-ooo/react-code-challenge/actions/workflows/deploy-gh-pages.yml)
+```
+🚨 Candidate should clone this branch & fix the bugs 🚨
+```
+
+Requirement: [Google Doc](https://docs.google.com/document/d/1es-r0BgwlZ0QaAPbnIOsQhs8DXDj4NuNgNyfiwR-9uY/edit#)
 
 Design: https://figma.fun/3oegaU
 
