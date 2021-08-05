@@ -1,8 +1,6 @@
 # React code challenge
 
-```
-🚨 Candidate should clone this branch & fix the bugs 🚨
-```
+🚨 Candidate should clone [`fix-the-bugs`](https://github.com/opn-ooo/react-code-challenge/tree/fix-the-bugs) branch & fix the bugs 🚨
 
 Requirement: [Google Doc](https://docs.google.com/document/d/1es-r0BgwlZ0QaAPbnIOsQhs8DXDj4NuNgNyfiwR-9uY/edit#)
 
