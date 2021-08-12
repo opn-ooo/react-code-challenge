@@ -1,5 +1,7 @@
 # React code challenge
 
+[![View source in vscode](https://img.shields.io/badge/Open%20in-vscode-blue)](https://github.dev/opn-ooo/react-code-challenge/tree/fix-the-bugs)
+
 ```
 🚨 Candidate should clone this branch & fix the bugs 🚨
 ```
@@ -9,8 +11,6 @@ Requirement: [Google Doc](https://docs.google.com/document/d/1es-r0BgwlZ0QaAPbnI
 Design: https://figma.fun/3oegaU
 
 Prototype: https://figma.fun/tnuL7b
-
-Source: [![View source in vscode](https://img.shields.io/badge/Open%20in-vscode-blue)](https://github.dev/opn-ooo/react-code-challenge/tree/fix-the-bugs)
 
 API:
 - `http`: http://203.170.190.44:8049
