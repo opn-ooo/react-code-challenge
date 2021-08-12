@@ -6,6 +6,9 @@ import { useLocation } from "wouter"
 import { usePageClass } from "@hooks/actions/usePageClass"
 import { getProductList, TypeProductListData } from "@hooks/services/backend"
 
+// Components Elements
+import Spinner from "@components/elements/Spinner"
+
 // Components Layouts
 import LayoutCenter from "@components/layouts/LayoutCenter"
 
@@ -136,58 +139,68 @@ const PageProducts: FC<InterfaceProductsProps> = ({
             <Container>
                 <Title>Products</Title>
 
-                <List>
-                    {products.map(({ id, name, price, qty }) => (
-                        <Products key={id}>
-                            <ProductHead />
+                <Spinner active={fetchedData.loading} />
 
-                            <ProductName>{name}</ProductName>
+                {!fetchedData.loading && (
+                    <List>
+                        {products.map(({ id, name, price, qty }) => (
+                            <Products key={id}>
+                                <ProductHead />
 
-                            <ProductPrice>
-                                {price.toLocaleString()} THB
-                            </ProductPrice>
+                                <ProductName>{name}</ProductName>
 
-                            <ProductQuantity>
-                                <ProductQuantityButton
-                                    disabled={qty <= 0}
-                                    onClick={() => remove(id)}
-                                >
-                                    <IconMinus />
-                                </ProductQuantityButton>
+                                <ProductPrice>
+                                    {price.toLocaleString()} THB
+                                </ProductPrice>
 
-                                <ProductQuantityCount>
-                                    {qty}
-                                </ProductQuantityCount>
+                                <ProductQuantity>
+                                    <ProductQuantityButton
+                                        disabled={qty <= 0}
+                                        onClick={() => remove(id)}
+                                    >
+                                        <IconMinus />
+                                    </ProductQuantityButton>
 
-                                <ProductQuantityButton onClick={() => add(id)}>
-                                    <IconPlus />
-                                </ProductQuantityButton>
-                            </ProductQuantity>
+                                    <ProductQuantityCount>
+                                        {qty}
+                                    </ProductQuantityCount>
 
-                            <ProductDescription>quantity</ProductDescription>
-                        </Products>
-                    ))}
-                </List>
+                                    <ProductQuantityButton
+                                        onClick={() => add(id)}
+                                    >
+                                        <IconPlus />
+                                    </ProductQuantityButton>
+                                </ProductQuantity>
 
-                <ProductCart>
-                    <ProductCartButton
-                        disabled={isEmptyCart}
-                        onClick={viewCart}
-                    >
-                        <IconCart />
+                                <ProductDescription>
+                                    quantity
+                                </ProductDescription>
+                            </Products>
+                        ))}
+                    </List>
+                )}
 
-                        <ProductCartCount hidden={isEmptyCart}>
-                            {catItemCount}
-                        </ProductCartCount>
-                    </ProductCartButton>
+                {!fetchedData.loading && (
+                    <ProductCart>
+                        <ProductCartButton
+                            disabled={isEmptyCart}
+                            onClick={viewCart}
+                        >
+                            <IconCart />
 
-                    <ProductCartText
-                        disabled={disableCheckout}
-                        onClick={viewCart}
-                    >
-                        Checkout
-                    </ProductCartText>
-                </ProductCart>
+                            <ProductCartCount hidden={isEmptyCart}>
+                                {catItemCount}
+                            </ProductCartCount>
+                        </ProductCartButton>
+
+                        <ProductCartText
+                            disabled={disableCheckout}
+                            onClick={viewCart}
+                        >
+                            Checkout
+                        </ProductCartText>
+                    </ProductCart>
+                )}
             </Container>
         </LayoutCenter>
     )
