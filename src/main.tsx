@@ -16,9 +16,9 @@ document.title = getAppTitle()
 
 render(
     <StrictMode>
+        <Toaster position="top-center" reverseOrder={true} />
         <Provider store={Store}>
             <App />
-            <Toaster position="top-center" reverseOrder={true} />
         </Provider>
     </StrictMode>,
     document.getElementById("root")

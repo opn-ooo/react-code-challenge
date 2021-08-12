@@ -4,18 +4,17 @@ import Axios, { AxiosResponse } from "axios"
 
 const { CancelToken, isCancel, create } = Axios
 
-export type TypeInitialState = {
-    [key: string]: string | number | boolean | TypeInitialState
-}
-
-export type TypeUseAxios = {
+export interface InterfaceUseAxios<T> {
     baseURL: string
-    initialState: TypeInitialState
+    initialState: T
 }
 
-export const successResolver = ({ data }: AxiosResponse) => data
+export const successResolver = <T>({ data }: AxiosResponse<T>) => data
 
-export const useAxios = ({ baseURL, initialState }: TypeUseAxios) => {
+export const useAxios = <InitialState>({
+    baseURL,
+    initialState,
+}: InterfaceUseAxios<InitialState>) => {
     const apiSource = CancelToken.source()
     const cancelToken = apiSource.token
 
@@ -30,9 +29,7 @@ export const useAxios = ({ baseURL, initialState }: TypeUseAxios) => {
             : null
     }
 
-    const [state, setState] = useState(() => ({
-        ...initialState,
-    }))
+    const [state, setState] = useState<InitialState>(() => initialState)
 
     // Cancel everything on unmount
     useEffect(() => {

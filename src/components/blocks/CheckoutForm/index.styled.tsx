@@ -97,21 +97,4 @@ export const Actions = styled.article`
     justify-content: center;
 `
 
-export const Submit = styled.button`
-    ${resetButton()}
-    font-weight: 500;
-    font-size: 0.875em;
-
-    padding: 12px 32px;
-    border-radius: 4px;
-
-    color: #fff;
-    background-color: var(--dorminant_2);
-    box-shadow: var(--product_shadow);
-
-    &:disabled {
-        color: var(--label);
-    }
-`
-
 export const Fields = styled.article.attrs(() => ({ className: "fields" }))``

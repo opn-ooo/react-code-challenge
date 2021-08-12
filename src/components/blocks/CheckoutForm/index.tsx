@@ -1,7 +1,18 @@
-import React, { FC, useCallback, useEffect, SyntheticEvent } from "react"
+import React, {
+    FC,
+    useCallback,
+    useEffect,
+    SyntheticEvent,
+    ChangeEvent,
+} from "react"
 import useModels from "react-use-models"
 import useValidator from "react-joi"
 import Joi from "joi"
+import {
+    validateCardNumber,
+    formatCardNumber,
+    formatCardExpiry,
+} from "creditcardutils"
 
 // Styled Elements
 import {
@@ -12,18 +23,19 @@ import {
     FieldControl,
     FieldLabel,
     Input,
-    Submit,
     Form,
     FieldGroups,
     FieldsMerge,
 } from "./index.styled"
 
-export type TypeCheckoutFormValues = {
-    email: string
-    card_number: string
-    card_expire: string
-    cvv: string
+type TypeCheckoutFormDefaultValues = {
+    email: string | null
+    card_number: string | null
+    card_expire: string | null
+    cvv: string | null
 }
+
+export type TypeCheckoutFormValues = NonNullable<TypeCheckoutFormDefaultValues>
 
 export interface CheckoutFormProps {
     onSuccess: (values: TypeCheckoutFormValues) => void
@@ -31,7 +43,7 @@ export interface CheckoutFormProps {
     submitText?: string
 }
 
-const defaultState = {
+const defaultState: TypeCheckoutFormDefaultValues = {
     email: null,
     card_number: null,
     card_expire: null,
@@ -43,9 +55,10 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
     loading = false,
     submitText = "Submit",
 }) => {
-    const { models, register } = useModels({
-        defaultState,
-    })
+    const { models, register, updateModel } =
+        useModels<TypeCheckoutFormDefaultValues>({
+            defaultState,
+        })
     const { state, setData } = useValidator({
         initialData: defaultState,
         schema: Joi.object({
@@ -60,39 +73,30 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
                     "any.required": "Required",
                 }),
             card_number: Joi.string()
-                .pattern(/^[0-9]+$/)
-                .min(12)
-                .max(19)
+                .custom((value, helpers) => {
+                    if (value) {
+                        if (!validateCardNumber(value)) {
+                            return helpers.error("string.cardNumber")
+                        }
+                    }
+
+                    return value
+                })
                 .required()
                 .messages({
-                    "string.pattern.base": "Must be numeric",
                     "string.empty": "Required",
-                    "string.min": "Minimum 12 digits required",
-                    "string.max": "Must be 19 Maximum digits",
+                    "string.cardNumber": "Must be a valid card",
                     "any.required": "Required",
                 }),
-            card_expire: Joi.string()
-                .pattern(/^[0-9]+$/)
-                .length(4)
-                .required()
-                .messages({
-                    "string.pattern.base": "Must be numeric",
-                    "string.empty": "Required",
-                    "string.length": "Must be 4 digits",
-                    "any.required": "Required",
-                }),
-            cvv: Joi.string()
-                .pattern(/^[0-9]+$/)
-                .min(3)
-                .max(4)
-                .required()
-                .messages({
-                    "string.pattern.base": "Must be numeric",
-                    "string.empty": "Required",
-                    "string.min": "Minimum 3 digits",
-                    "string.max": "Maximum 4 digits",
-                    "any.required": "Required",
-                }),
+            card_expire: Joi.string().required().messages({
+                "string.empty": "Required",
+                "any.required": "Required",
+            }),
+            cvv: Joi.string().length(3).required().messages({
+                "string.empty": "Required",
+                "string.length": "Maximum 3 digits",
+                "any.required": "Required",
+            }),
         }),
     })
 
@@ -109,6 +113,19 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
         e.preventDefault()
 
         onSuccess(state.$data)
+    }
+
+    const formatter = {
+        cardNumber: (e: ChangeEvent<HTMLInputElement>) => {
+            const value = formatCardNumber(e.target.value)
+
+            updateModel("card_number", value)
+        },
+        cardExpire: (e: ChangeEvent<HTMLInputElement>) => {
+            const value = formatCardExpiry(e.target.value)
+
+            updateModel("card_expire", value)
+        },
     }
 
     // Sync model <-> validator
@@ -146,7 +163,10 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
                             </FieldLabel>
 
                             <Input
-                                {...register.input({ name: "card_number" })}
+                                {...register.input({
+                                    name: "card_number",
+                                    onChange: formatter.cardNumber,
+                                })}
                                 type="text"
                                 placeholder="1234 1234 1234 1234"
                             />
@@ -162,7 +182,10 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
                     <FieldsMerge>
                         <Fields>
                             <Input
-                                {...register.input({ name: "card_expire" })}
+                                {...register.input({
+                                    name: "card_expire",
+                                    onChange: formatter.cardExpire,
+                                })}
                                 type="text"
                                 placeholder="MM / YY"
                             />
@@ -189,9 +212,9 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
                 </FieldGroups>
 
                 <Actions>
-                    <Submit disabled={state.$auto_invalid || loading}>
+                    <button disabled={state.$auto_invalid || loading}>
                         {submitText}
-                    </Submit>
+                    </button>
                 </Actions>
             </Form>
         </Container>

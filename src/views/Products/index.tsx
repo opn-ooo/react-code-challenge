@@ -4,6 +4,10 @@ import { useLocation } from "wouter"
 
 // Actions
 import { usePageClass } from "@hooks/actions/usePageClass"
+import { getProductList, TypeProductListData } from "@hooks/services/backend"
+
+// Components Elements
+import Spinner from "@components/elements/Spinner"
 
 // Components Layouts
 import LayoutCenter from "@components/layouts/LayoutCenter"
@@ -32,11 +36,12 @@ import { ReactComponent as IconPlus } from "@components/svgs/plus.svg"
 import { ReactComponent as IconMinus } from "@components/svgs/minus.svg"
 import { ReactComponent as IconCart } from "@components/svgs/cart.svg"
 
-// Data
-import Data from "./data.json"
+type TypeProductData = TypeProductListData & {
+    qty: number
+}
 
-const prepareData = () => {
-    return Data.map((info) => ({
+const prepareData = (data: TypeProductListData[]): TypeProductData[] => {
+    return data.map((info) => ({
         ...info,
         qty: 0,
     }))
@@ -57,7 +62,14 @@ const PageProducts: FC<InterfaceProductsProps> = ({
 
     const dispatch = useDispatch()
 
-    const [products, updateProducts] = useState(prepareData)
+    const { state: fetchedData, fetch } = getProductList()
+
+    const requestedData = useMemo(
+        () => prepareData(fetchedData.data),
+        [fetchedData.data]
+    )
+
+    const [products, updateProducts] = useState<TypeProductData[]>([])
 
     const catItemCount = useMemo(
         () => products.reduce((total, { qty }) => total + qty, 0),
@@ -65,6 +77,11 @@ const PageProducts: FC<InterfaceProductsProps> = ({
     )
 
     const isEmptyCart = useMemo(() => catItemCount <= 0, [catItemCount])
+
+    const disableCheckout = useMemo(
+        () => isEmptyCart || fetchedData.loading,
+        [isEmptyCart, fetchedData.loading]
+    )
 
     const remove = (id: number | string) => {
         updateProducts((old) =>
@@ -100,6 +117,16 @@ const PageProducts: FC<InterfaceProductsProps> = ({
         setLocation("/checkout")
     }
 
+    // Fetch on mount
+    useEffect(() => {
+        fetch()
+    }, [fetch])
+
+    // Sync to state
+    useEffect(() => {
+        updateProducts(requestedData)
+    }, [requestedData, updateProducts])
+
     // Sync to redux
     useEffect(() => {
         const cartItems = products.filter(({ qty }) => qty > 0)
@@ -112,55 +139,68 @@ const PageProducts: FC<InterfaceProductsProps> = ({
             <Container>
                 <Title>Products</Title>
 
-                <List>
-                    {products.map(({ id, name, price, qty, currency }) => (
-                        <Products key={id}>
-                            <ProductHead />
+                <Spinner active={fetchedData.loading} />
 
-                            <ProductName>{name}</ProductName>
+                {!fetchedData.loading && (
+                    <List>
+                        {products.map(({ id, name, price, qty }) => (
+                            <Products key={id}>
+                                <ProductHead />
 
-                            <ProductPrice>
-                                {price.toLocaleString()} {currency}
-                            </ProductPrice>
+                                <ProductName>{name}</ProductName>
 
-                            <ProductQuantity>
-                                <ProductQuantityButton
-                                    disabled={qty <= 0}
-                                    onClick={() => remove(id)}
-                                >
-                                    <IconMinus />
-                                </ProductQuantityButton>
+                                <ProductPrice>
+                                    {price.toLocaleString()} THB
+                                </ProductPrice>
 
-                                <ProductQuantityCount>
-                                    {qty}
-                                </ProductQuantityCount>
+                                <ProductQuantity>
+                                    <ProductQuantityButton
+                                        disabled={qty <= 0}
+                                        onClick={() => remove(id)}
+                                    >
+                                        <IconMinus />
+                                    </ProductQuantityButton>
 
-                                <ProductQuantityButton onClick={() => add(id)}>
-                                    <IconPlus />
-                                </ProductQuantityButton>
-                            </ProductQuantity>
+                                    <ProductQuantityCount>
+                                        {qty}
+                                    </ProductQuantityCount>
 
-                            <ProductDescription>quantity</ProductDescription>
-                        </Products>
-                    ))}
-                </List>
+                                    <ProductQuantityButton
+                                        onClick={() => add(id)}
+                                    >
+                                        <IconPlus />
+                                    </ProductQuantityButton>
+                                </ProductQuantity>
 
-                <ProductCart>
-                    <ProductCartButton
-                        disabled={isEmptyCart}
-                        onClick={viewCart}
-                    >
-                        <IconCart />
+                                <ProductDescription>
+                                    quantity
+                                </ProductDescription>
+                            </Products>
+                        ))}
+                    </List>
+                )}
 
-                        <ProductCartCount hidden={isEmptyCart}>
-                            {catItemCount}
-                        </ProductCartCount>
-                    </ProductCartButton>
+                {!fetchedData.loading && (
+                    <ProductCart>
+                        <ProductCartButton
+                            disabled={isEmptyCart}
+                            onClick={viewCart}
+                        >
+                            <IconCart />
 
-                    <ProductCartText disabled={isEmptyCart} onClick={viewCart}>
-                        Checkout
-                    </ProductCartText>
-                </ProductCart>
+                            <ProductCartCount hidden={isEmptyCart}>
+                                {catItemCount}
+                            </ProductCartCount>
+                        </ProductCartButton>
+
+                        <ProductCartText
+                            disabled={disableCheckout}
+                            onClick={viewCart}
+                        >
+                            Checkout
+                        </ProductCartText>
+                    </ProductCart>
+                )}
             </Container>
         </LayoutCenter>
     )
