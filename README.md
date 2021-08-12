@@ -1,6 +1,6 @@
 # React code challenge
 
-[![View source in vscode](https://img.shields.io/badge/Open%20in-vscode-blue)](https://github.dev/opn-ooo/react-code-challenge/tree/fix-the-bugs)
+[![View source in vscode](https://img.shields.io/badge/Open%20in%20vscode-browser-blue?logo=visualstudiocode)](https://github.dev/opn-ooo/react-code-challenge/tree/fix-the-bugs)
 
 ```
 🚨 Candidate should clone this branch & fix the bugs 🚨
