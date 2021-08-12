@@ -10,6 +10,8 @@ Design: https://figma.fun/3oegaU
 
 Prototype: https://figma.fun/tnuL7b
 
+Source: [![View source in vscode](https://img.shields.io/badge/Open%20in-vscode-blue)](https://github.dev/opn-ooo/react-code-challenge/tree/fix-the-bugs)
+
 API:
 - `http`: http://203.170.190.44:8049
 - `https`: https://react-code-challenge-mock-api.netlify.app
